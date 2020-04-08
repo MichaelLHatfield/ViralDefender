@@ -706,6 +706,7 @@ self.C3_JsPropNameTable = [
 	{Audio: 0},
 	{txtRecoveryTime: 0},
 	{txtHealth2: 0},
+	{txtHealth3: 0},
 	{enemies: 0},
 	{health: 0},
 	{recoveryTime: 0},
@@ -718,6 +719,7 @@ self.C3_JsPropNameTable = [
 	{bossMovespeed: 0},
 	{bossHP: 0},
 	{bossDamage: 0},
+	{damageIncrement: 0},
 	{rangeIncrement: 0}
 ];
 
@@ -833,7 +835,11 @@ self.C3_JsPropNameTable = [
 		() => 1,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
-			return () => (and("Time in Recovery: ", v0.GetValue()) + "s");
+			return () => and(v0.GetValue(), "s");
+		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => Math.floor((v0.GetValue() / 60));
 		},
 		() => "Turret Control, Collect Health, & Enemy Damage",
 		() => "gameLayer",
@@ -879,17 +885,17 @@ self.C3_JsPropNameTable = [
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => and(n0.ExpInstVar(), " +1");
+			const v1 = p._GetNode(1).GetVar();
+			return () => and(and(n0.ExpInstVar(), " +"), v1.GetValue());
 		},
-		() => 125,
-		() => 25,
+		() => 75,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => and("ROTATE=", n0.ExpInstVar());
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => and(n0.ExpInstVar(), " +25");
+			return () => and(n0.ExpInstVar(), " +10");
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -901,7 +907,7 @@ self.C3_JsPropNameTable = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => (n0.ExpObject() + (v1.GetValue() * 2));
 		},
-		() => 500,
+		() => 125,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => and("RANGE=", n0.ExpInstVar());
@@ -911,17 +917,16 @@ self.C3_JsPropNameTable = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => and(and(n0.ExpInstVar(), "  +"), v1.GetValue());
 		},
-		() => 750,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => and("SPEED=", n0.ExpInstVar());
 		},
 		p => {
 			const n0 = p._GetNode(0);
-			return () => and(n0.ExpInstVar(), "  +50");
+			return () => and(n0.ExpInstVar(), "  +10");
 		},
-		() => 1250,
-		() => 0.025,
+		() => 200,
+		() => 0.01,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (and("RATE=", n0.ExpInstVar()) + "s");
@@ -936,15 +941,9 @@ self.C3_JsPropNameTable = [
 			return () => (n0.ExpObject() + 1);
 		},
 		() => 0.5,
-		() => 0.05,
-		() => 0.1,
+		() => 0.025,
 		() => 2,
-		() => 0.25,
-		() => 0.01,
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => and("Health: ", v0.GetValue());
-		}
+		() => 0.1
 	];
 }
 
