@@ -537,6 +537,18 @@ self["C3_Shaders"] = {};
 
 "use strict";C3.Plugins.Audio.Exps={Duration(b){const c=this._GetFirstAudioStateByTag(b);return c?c["duration"]:0},PlaybackTime(b){const c=this._GetFirstAudioStateByTag(b);return c?c["playbackTime"]:0},PlaybackRate(b){const c=this._GetFirstAudioStateByTag(b);return c?c["playbackRate"]:0},Volume(b){const c=this._GetFirstAudioStateByTag(b);return c?this.LinearToDb(c["volume"]):0},MasterVolume(){return this.LinearToDb(this._masterVolume)},EffectCount(a){return this._effectCount.get(a.toLowerCase())||0},AnalyserFreqBinCount(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["binCount"]:0},AnalyserFreqBinAt(a,b,c){var d=Math.floor;const e=this.GetAnalyserData(a,d(b));return e?(c=d(c),0>c||c>=e["binCount"]?0:e["freqBins"][c]):0},AnalyserPeakLevel(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["peak"]:0},AnalyserRMSLevel(a,b){const c=this.GetAnalyserData(a,Math.floor(b));return c?c["rms"]:0},SampleRate(){return this._sampleRate},CurrentTime(){return self["C3_GetAudioContextCurrentTime"]?self["C3_GetAudioContextCurrentTime"]():performance.now()/1e3}};
 
+"use strict";{C3.Plugins.Button=class extends C3.SDKDOMPluginBase{constructor(a){super(a,"button"),this.AddElementMessageHandler("click",(a,b)=>a._OnClick(b))}Release(){super.Release()}}}
+
+"use strict";C3.Plugins.Button.Type=class extends C3.SDKTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{C3.Plugins.Button.Instance=class extends C3.SDKDOMInstanceBase{constructor(a,b){super(a,"button"),this._text="OK",this._isCheckbox=!1,this._isChecked=!1,this._title="",this._id="",this._isEnabled=!0,this._autoFontSize=!0,b&&(this._isCheckbox=1===b[0],this._text=b[1],this._title=b[2],this.GetWorldInfo().SetVisible(b[3]),this._isEnabled=b[4],this._autoFontSize=b[5],this._isChecked=b[6],this._id=b[7]),this.CreateElement({"id":this._id})}Release(){super.Release()}GetElementState(){return{"text":this._text,"isCheckbox":this._isCheckbox,"isChecked":this._isChecked,"title":this._title,"isVisible":this.GetWorldInfo().IsVisible(),"isEnabled":this._isEnabled}}async _OnClick(a){this._isChecked=a["isChecked"],this.GetScriptInterface().dispatchEvent(C3.New(C3.Event,"click",!0)),await this.TriggerAsync(C3.Plugins.Button.Cnds.OnClicked)}_SetText(a){this._text===a||(this._text=a,this.UpdateElementState())}_GetText(){return this._text}_SetTooltip(a){this._title===a||(this._title=a,this.UpdateElementState())}_GetTooltip(){return this._title}_SetEnabled(a){a=!!a;this._isEnabled===a||(this._isEnabled=a,this.UpdateElementState())}_IsEnabled(){return this._isEnabled}_SetChecked(a){this._isCheckbox&&(a=!!a,this._isChecked===a||(this._isChecked=a,this.UpdateElementState()))}_IsChecked(){return this._isChecked}Draw(){}SaveToJson(){return{"text":this._text,"checked":this._isChecked,"title":this._title,"enabled":this._isEnabled}}LoadFromJson(a){this._text=a["text"],this._isChecked=a["checked"],this._title=a["title"],this._isEnabled=a["enabled"],this.UpdateElementState()}GetPropertyValueByIndex(a){return 1===a?this._text:2===a?this._title:4===a?this._isEnabled:5===a?this._autoFontSize:6===a?this._isChecked:7===a?this._id:void 0}SetPropertyValueByIndex(a,b){switch(a){case 1:if(this._text===b)return;this._text=b,this.UpdateElementState();break;case 2:if(this._title===b)return;this._title=b,this.UpdateElementState();break;case 4:if(this._isEnabled===!!b)return;this._isEnabled=!!b,this.UpdateElementState();break;case 5:this._autoFontSize=!!b;break;case 6:if(this._isChecked===!!b)return;this._isChecked=!!b,this.UpdateElementState();break;case 7:if(this._id===!!b)return;this._id=b,this.UpdateElementState();}}GetDebuggerProperties(){const a=C3.Plugins.Button.Acts;return[{title:"plugins.button.name",properties:[{name:"plugins.button.properties.text.name",value:this._text,onedit:(b)=>this.CallAction(a.SetText,b)},{name:"plugins.button.properties.enabled.name",value:this._isEnabled,onedit:(b)=>this.CallAction(a.SetEnabled,b)},{name:"plugins.button.properties.checked.name",value:this._isChecked,onedit:(b)=>this.CallAction(a.SetChecked,b)}]}]}GetScriptInterfaceClass(){return IButtonInstance}};const a=new WeakMap;self.IButtonInstance=class extends IDOMInstance{constructor(){super(),a.set(this,IInstance._GetInitInst().GetSdkInstance())}set text(b){a.get(this)._SetText(b)}get text(){return a.get(this)._GetText()}set tooltip(b){a.get(this)._SetTooltip(b)}get tooltip(){return a.get(this)._GetTooltip()}set isEnabled(b){a.get(this)._SetEnabled(b)}get isEnabled(){return a.get(this)._IsEnabled()}set isChecked(b){a.get(this)._SetChecked(b)}get isChecked(){return a.get(this)._IsChecked()}}}
+
+"use strict";C3.Plugins.Button.Cnds={OnClicked(){return!0},IsChecked(){return this._isChecked},CompareText(a,b){return b?this._text===a:C3.equalsNoCase(this._text,a)}};
+
+"use strict";C3.Plugins.Button.Acts={SetText(a){this._SetText(a)},SetTooltip(a){this._SetTooltip(a)},SetVisible(a){const b=this.GetWorldInfo();a=0!==a;b.IsVisible()===a||b.SetVisible(a)},SetEnabled(a){this._SetEnabled(a)},SetFocus(){this.FocusElement()},SetBlur(){this.BlurElement()},SetCSSStyle(a,b){this.SetElementCSSStyle(a,b)},SetChecked(a){this._SetChecked(0!==a)},ToggleChecked(){this._isCheckbox&&(this._isChecked=!this._isChecked,this.UpdateElementState())}};
+
+"use strict";C3.Plugins.Button.Exps={Text(){return this._text}};
+
 "use strict";C3.Behaviors.Turret=class extends C3.SDKBehaviorBase{constructor(a){super(a)}Release(){super.Release()}};
 
 "use strict";C3.Behaviors.Turret.Type=class extends C3.SDKBehaviorTypeBase{constructor(a){super(a),this._targetTypes=[]}Release(){C3.clearArray(this._targetTypes),super.Release()}OnCreate(){}GetTargetTypes(){return this._targetTypes}};
@@ -610,12 +622,16 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Touch,
 		C3.Plugins.Particles,
 		C3.Plugins.Audio,
+		C3.Plugins.Button,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.System.Cnds.OnLayoutStart,
+		C3.Plugins.Sprite.Acts.StopAnim,
+		C3.Plugins.Sprite.Acts.SetAnimFrame,
 		C3.Plugins.System.Acts.Wait,
 		C3.Plugins.Text.Acts.SetOpacity,
 		C3.Behaviors.Turret.Acts.AddTarget,
 		C3.Plugins.System.Cnds.EveryTick,
+		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.Sprite.Acts.SetY,
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.System.Cnds.Every,
@@ -634,8 +650,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.System.Acts.SubVar,
 		C3.Plugins.System.Cnds.CompareVar,
+		C3.Plugins.System.Acts.SetBoolVar,
+		C3.Plugins.Touch.Cnds.OnTapGesture,
 		C3.Plugins.System.Acts.ResetGlobals,
-		C3.Plugins.System.Acts.RestartLayout,
+		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Sprite.Acts.SetOpacity,
 		C3.Plugins.System.Cnds.Else,
@@ -648,7 +666,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.Height,
 		C3.Behaviors.Turret.Acts.SetProjectileSpeed,
 		C3.Behaviors.Turret.Acts.SetRateOfFire,
-		C3.Plugins.Sprite.Acts.SetHeight
+		C3.Plugins.Sprite.Acts.SetHeight,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.Button.Cnds.OnClicked
 	];
 };
 self.C3_JsPropNameTable = [
@@ -705,10 +725,18 @@ self.C3_JsPropNameTable = [
 	{bloodSplatter2: 0},
 	{Audio: 0},
 	{txtRecoveryTime: 0},
-	{txtHealth2: 0},
-	{txtHealth3: 0},
+	{txtHealthText: 0},
+	{txtTitle: 0},
+	{txtInstructions: 0},
+	{btnPlayEasy: 0},
+	{btnPlayNormal: 0},
+	{btnPlayExtreme: 0},
+	{txtInstructions2: 0},
+	{txtInstructions3: 0},
+	{txtInstructions4: 0},
 	{enemies: 0},
 	{health: 0},
+	{whichCharacter: 0},
 	{recoveryTime: 0},
 	{painMeterTimer: 0},
 	{enemySpawnTime: 0},
@@ -719,8 +747,11 @@ self.C3_JsPropNameTable = [
 	{bossMovespeed: 0},
 	{bossHP: 0},
 	{bossDamage: 0},
+	{gameOver: 0},
 	{damageIncrement: 0},
-	{rangeIncrement: 0}
+	{rangeIncrement: 0},
+	{gameLevel: 0},
+	{playerFrameNumber: 0}
 ];
 
 "use strict";
@@ -820,6 +851,10 @@ self.C3_JsPropNameTable = [
 
 	self.C3_ExpressionFuncs = [
 		() => "Initialization and Mechanics",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => v0.GetValue();
+		},
 		() => 3,
 		() => 0,
 		p => {
@@ -853,10 +888,6 @@ self.C3_JsPropNameTable = [
 		() => 1000,
 		() => "Spawn Manager",
 		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => v0.GetValue();
-		},
-		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(80, 380);
 		},
@@ -877,7 +908,6 @@ self.C3_JsPropNameTable = [
 		() => "DEAD",
 		() => 100,
 		() => "GAME OVER",
-		() => 5,
 		() => "Shop Manager",
 		p => {
 			const n0 = p._GetNode(0);
@@ -943,7 +973,14 @@ self.C3_JsPropNameTable = [
 		() => 0.5,
 		() => 0.025,
 		() => 2,
-		() => 0.1
+		() => 0.1,
+		() => 8,
+		() => 60,
+		() => 100001,
+		() => 30,
+		() => 50001,
+		() => 5,
+		() => 10001
 	];
 }
 
