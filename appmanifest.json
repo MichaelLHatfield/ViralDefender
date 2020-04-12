@@ -1,7 +1,7 @@
 {
 	"name": "Viral Defender",
 	"short_name": "Viral Defender",
-	"description": "",
+	"description": "Kill all the germs!",
 	"start_url": "index.html",
 	"display": "fullscreen",
 	"orientation": "portrait",

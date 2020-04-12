@@ -549,6 +549,18 @@ self["C3_Shaders"] = {};
 
 "use strict";C3.Plugins.Button.Exps={Text(){return this._text}};
 
+"use strict";C3.Plugins.advert=class extends C3.SDKPluginBase{constructor(a){super(a)}Release(){super.Release()}};
+
+"use strict";C3.Plugins.advert.Type=class extends C3.SDKTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{function a(a){console.log("[C3 advert]",a)}C3.Plugins.advert.Instance=class extends C3.SDKInstanceBase{constructor(a,b){super(a,"advert"),this.testMode=!!b[0],this.keyState=null,this.bannerState=null,this.interstitialState=null,this.videoState=null,this.consentStatus=null,this.isInEeaOrUnknown=!0;const c=this._runtime.Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(c,"beforeruntimestart",()=>this._OnBeforeRuntimeStart(b)),C3.Disposable.From(c,"layoutchange",()=>this._OnLayoutChange()))}_OnBeforeRuntimeStart(a){const b=a[1],c=a[2],d=a[3],e=a[4],f=a[5],g=a[6],h=a[7],i=this._runtime.IsiOSCordova()?c:b;i&&this._SetPublicKey(i,d,f,e,g,h)}_OnLayoutChange(){this.keyState==="set"&&this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationComplete)}async _SetPublicKey(a,b,c,d,e,f){if(null===this.keyState){this.keyState="busy",1===e&&(e=0),e=["eu","always","never"][e],f=["DISABLED","EEA","NOT_EEA"][f];try{const g=await this.PostToDOMAsync("Configure",[a.trim(),b.trim(),c.trim(),d,e,this.testMode,f]),[h,i]=g.split("_");this.isInEeaOrUnknown="false"!==i,this.keyState="set",this.consentStatus=h,this.SetParameters("configuration complete"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationComplete)}catch(a){this.keyState=null,this.SetError("configuration failed",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationFailed)}}}PostToDOMAsync(a,b=[]){return super.PostToDOMAsync(a,b)}SetError(a,b){const c="string"==typeof b?b:b.message;this.SetParameters(a,c)}SetParameters(b,c="",d="",e=0){a(`Event (${b} Error (${c}) Type (${d}) Amount (${e}))`),this.errorMessage=c||"",this.rewardType=d||"",this.rewardValue=e||0}NoAds(){if(this.consentStatus==="UNKNOWN"||this.consentStatus==="AD_FREE")throw new Error("user has not given consent")}}}
+
+"use strict";{const a="shown";C3.Plugins.advert.Cnds={OnBannerReady(){return!0},OnVideoReady(){return!0},OnInterstitialReady(){return!0},OnBannerFailedToLoad(){return!0},OnVideoFailedToLoad(){return!0},OnInterstitialFailedToLoad(){return!0},OnBannerShown(){return!0},OnVideoComplete(){return!0},OnInterstitialComplete(){return!0},OnBannerHidden(){return!0},OnVideoCancelled(){return!0},OnInterstitialCancelled(){return!0},OnConfigurationFailed(){return!0},OnConfigurationComplete(){return!0},OnUserPersonalizationUpdated(){return!0},IsShowingBanner(){return this.bannerState===a},IsShowingVideo(){return this.videoState===a},IsShowingInterstitial(){return this.interstitialState===a},IsInEeaOrUnknown(){return this.isInEeaOrUnknown},IsBannerLoaded(){return this.bannerState==="loaded"},IsVideoLoaded(){return this.videoState==="loaded"},IsInterstitialLoaded(){return this.interstitialState==="loaded"},IsConfigured(){return this.keyState==="set"}}}
+
+"use strict";{const a="busy",b=["portrait","landscape","standard","large","medium","full","leaderboard"],c=["bottom","top"];C3.Plugins.advert.Acts={async CreateBanner(d,e,f,g){if(null==this.bannerState){this.bannerState=a;try{this.NoAds(),await this.PostToDOMAsync("CreateBannerAdvert",[d.trim(),b[e],this.testMode,c[g]]),this.bannerState="loaded",this.SetParameters("banner created"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnBannerReady),0==f&&C3.Plugins.advert.Acts.ShowBanner.call(this)}catch(a){this.bannerState=null,this.SetError("failed to create banner",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnBannerFailedToLoad)}}},async ShowBanner(){if("loaded"==this.bannerState){this.bannerState=a;try{await this.PostToDOMAsync("ShowBannerAdvert"),this.bannerState="shown",this.SetParameters("banner shown"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnBannerShown)}catch(a){this.bannerState=null,this.SetError("failed to show banner",a)}}},async HideBanner(){if("shown"==this.bannerState){this.bannerState=a;try{await this.PostToDOMAsync("HideBannerAdvert"),this.bannerState=null,this.SetParameters("banner hidden"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnBannerHidden)}catch(a){this.bannerState=null,this.SetError("failed to hide banner",a)}}},async CreateInterstitial(b,c){if(null==this.interstitialState){this.interstitialState=a;try{this.NoAds(),await this.PostToDOMAsync("CreateInterstitialAdvert",[b.trim(),this.testMode]),this.interstitialState="loaded",this.SetParameters("interstitial created"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnInterstitialReady),0==c&&C3.Plugins.advert.Acts.ShowInterstitial.call(this)}catch(a){this.interstitialState=null,this.SetError("failed to create interstitial",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnInterstitialFailedToLoad)}}},async ShowInterstitial(){if("loaded"==this.interstitialState){this.interstitialState="shown";try{await this.PostToDOMAsync("ShowInterstitialAdvert"),this.interstitialState=null,this.SetParameters("interstitial completed"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnInterstitialComplete)}catch(a){this.interstitialState=null,this.SetError("interstitial cancelled",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnInterstitialCancelled)}}},async CreateVideo(b,c){if(null==this.videoState){this.videoState=a;try{this.NoAds(),await this.PostToDOMAsync("CreateVideoAdvert",[b.trim(),this.testMode]),this.videoState="loaded",this.SetParameters("video created"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnVideoReady),0==c&&C3.Plugins.advert.Acts.ShowVideo.call(this)}catch(a){this.videoState=null,this.SetError("failed to create video",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnVideoFailedToLoad)}}},async ShowVideo(){if("loaded"==this.videoState){this.videoState="shown";try{const a=await this.PostToDOMAsync("ShowVideoAdvert"),[b,c]=JSON.parse(a);this.videoState=null,this.SetParameters("video completed",null,b,c),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnVideoComplete)}catch(a){this.videoState=null,this.SetError("video cancelled",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnVideoCancelled)}}},SetPublicKey(a,b,c,d,e,f){d=[!0,!1][d],this._SetPublicKey(a,b,c,d,e,f)},async ShowConsentDialog(){if("set"===this.keyState){this.keyState=a;try{const a=await this.PostToDOMAsync("RequestConsent"),[b,c]=a.split("_");this.keyState="set",this.consentStatus=b,this.SetParameters("configuration complete"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationComplete)}catch(a){this.keyState="set",this.SetError("configuration failed",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationFailed)}}},async SetUserPersonalization(b){if("set"===this.keyState){this.keyState=a,b=["PERSONALIZED","NON_PERSONALIZED","AD_FREE"][b];try{const a=await this.PostToDOMAsync("SetUserPersonalisation",[b]);this.consentStatus=a,this.keyState="set",this.SetParameters("user personalisation updated"),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnUserPersonalizationUpdated)}catch(a){this.keyState="set",this.SetError("configuration failed",a),await this.TriggerAsync(C3.Plugins.advert.Cnds.OnConfigurationFailed)}}},async SetMaxAdContentRating(a){if("set"===this.keyState)try{const b=["G","PG","T","MA"][a];await this.PostToDOMAsync("SetMaxAdContentRating",[b])}catch(a){}},async TagForChildDirectedTreatment(a){if("set"===this.keyState)try{await this.PostToDOMAsync("TagForChildDirectedTreatment",[a?1:0])}catch(a){}},async TagForUnderAgeOfConsent(a){if("set"===this.keyState)try{await this.PostToDOMAsync("TagForUnderAgeOfConsent",[a?1:0])}catch(a){}}}}
+
+"use strict";C3.Plugins.advert.Exps={ErrorMessage(){return this.errorMessage||""},RewardType(){return this.rewardType||""},RewardValue(){return this.rewardValue||0},ConsentStatus(){return this.consentStatus||"UNKNOWN"}};
+
 "use strict";C3.Behaviors.Turret=class extends C3.SDKBehaviorBase{constructor(a){super(a)}Release(){super.Release()}};
 
 "use strict";C3.Behaviors.Turret.Type=class extends C3.SDKBehaviorTypeBase{constructor(a){super(a),this._targetTypes=[]}Release(){C3.clearArray(this._targetTypes),super.Release()}OnCreate(){}GetTargetTypes(){return this._targetTypes}};
@@ -623,8 +635,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Particles,
 		C3.Plugins.Audio,
 		C3.Plugins.Button,
-		C3.Plugins.System.Cnds.IsGroupActive,
+		C3.Plugins.advert,
 		C3.Plugins.System.Cnds.OnLayoutStart,
+		C3.Plugins.advert.Acts.CreateBanner,
+		C3.Plugins.advert.Acts.ShowBanner,
+		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Sprite.Acts.StopAnim,
 		C3.Plugins.Sprite.Acts.SetAnimFrame,
 		C3.Plugins.System.Acts.Wait,
@@ -653,6 +668,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Touch.Cnds.OnTapGesture,
 		C3.Plugins.System.Acts.ResetGlobals,
+		C3.Plugins.advert.Acts.CreateInterstitial,
+		C3.Plugins.advert.Acts.ShowInterstitial,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Sprite.Acts.SetOpacity,
@@ -668,7 +685,11 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Turret.Acts.SetRateOfFire,
 		C3.Plugins.Sprite.Acts.SetHeight,
 		C3.Plugins.System.Acts.SetVar,
-		C3.Plugins.Button.Cnds.OnClicked
+		C3.Plugins.Button.Cnds.OnClicked,
+		C3.Plugins.Touch.Cnds.OnTouchObject,
+		C3.Plugins.advert.Acts.CreateVideo,
+		C3.Plugins.advert.Acts.ShowVideo,
+		C3.Plugins.advert.Cnds.OnVideoComplete
 	];
 };
 self.C3_JsPropNameTable = [
@@ -734,6 +755,8 @@ self.C3_JsPropNameTable = [
 	{txtInstructions2: 0},
 	{txtInstructions3: 0},
 	{txtInstructions4: 0},
+	{MobileAdvert: 0},
+	{btnShowAdForHealth: 0},
 	{enemies: 0},
 	{health: 0},
 	{whichCharacter: 0},
@@ -751,7 +774,8 @@ self.C3_JsPropNameTable = [
 	{damageIncrement: 0},
 	{rangeIncrement: 0},
 	{gameLevel: 0},
-	{playerFrameNumber: 0}
+	{playerFrameNumber: 0},
+	{startingHealthModifier: 0}
 ];
 
 "use strict";
@@ -850,6 +874,7 @@ self.C3_JsPropNameTable = [
 	}
 
 	self.C3_ExpressionFuncs = [
+		() => "ca-app-pub-7764686092971173/6676262139",
 		() => "Initialization and Mechanics",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
@@ -908,6 +933,7 @@ self.C3_JsPropNameTable = [
 		() => "DEAD",
 		() => 100,
 		() => "GAME OVER",
+		() => "ca-app-pub-7764686092971173/7377247519\n",
 		() => "Shop Manager",
 		p => {
 			const n0 = p._GetNode(0);
@@ -976,11 +1002,21 @@ self.C3_JsPropNameTable = [
 		() => 0.1,
 		() => 8,
 		() => 60,
-		() => 100001,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (100001 * v0.GetValue());
+		},
 		() => 30,
-		() => 50001,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (50001 * v0.GetValue());
+		},
 		() => 5,
-		() => 10001
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (10001 * v0.GetValue());
+		},
+		() => "ca-app-pub-7764686092971173/4107892820"
 	];
 }
 
