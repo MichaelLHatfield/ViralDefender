@@ -674,7 +674,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.Compare,
 		C3.Plugins.Sprite.Acts.SetOpacity,
 		C3.Plugins.System.Cnds.Else,
-		C3.Plugins.Touch.Cnds.OnTapGestureObject,
+		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.Sprite.Acts.AddInstanceVar,
 		C3.Behaviors.Turret.Acts.SetRotateSpeed,
 		C3.Behaviors.Turret.Acts.SetRange,
@@ -686,7 +686,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.SetHeight,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Button.Cnds.OnClicked,
-		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.advert.Acts.CreateVideo,
 		C3.Plugins.advert.Acts.ShowVideo,
 		C3.Plugins.advert.Cnds.OnVideoComplete
@@ -914,7 +913,7 @@ self.C3_JsPropNameTable = [
 		() => "Spawn Manager",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0(80, 380);
+			return () => f0(20, 460);
 		},
 		() => 10,
 		p => {
